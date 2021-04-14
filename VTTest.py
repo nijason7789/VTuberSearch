@@ -1,0 +1,3 @@
+getItems = []
+
+print(type(getItems))
