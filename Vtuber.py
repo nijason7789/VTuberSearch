@@ -43,7 +43,7 @@ def main():
     print(itemGet,'\n')
     print(len(itemGet))
 
-    i = 0
+    i = 0 #測試看看
     for i in range(len(itemGet)):
         print(itemGet[i]['snippet']['channelTitle'])
         print(itemGet[i]['id']['channelId'],'\n')
