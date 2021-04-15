@@ -28,25 +28,94 @@ def main():
     youtube = googleapiclient.discovery.build(
         api_service_name, api_version, credentials=credentials)
 
-    request = youtube.search().list(
+    request = youtube.search().list(    #第一次呼叫，不含 nextPageToken
         part="snippet",
         q="Hololive中文|烤肉|熟肉",
         maxResults = 50,
         relevanceLanguage="zh_hant",
         type="channel"
     )
-    itemGet = {}
-    response = request.execute()
+    response = request.execute() #執行
+    PageInfo = response['pageInfo']
+    TotalResult = PageInfo['totalResults']
+    ResultPerPage = PageInfo['resultsPerPage']
     itemGet = response['items']
+    ResultnextPageToken = response['nextPageToken']
+    ResultChannelTitle = []
+    ResultChannelId = []
+
+#測試確認用之輸出
 
     print(response,'\n')
     print(itemGet,'\n')
+    print(ResultnextPageToken,'\n')
+    print(type(request))
     print(len(itemGet))
+    print(type(TotalResult))
+    print(type(ResultPerPage))
 
-    i = 0 #測試看看
-    for i in range(len(itemGet)):
-        print(itemGet[i]['snippet']['channelTitle'])
-        print(itemGet[i]['id']['channelId'],'\n')
+#/測試確認用之輸出
+
+    i = 0 
+
+    for i in range(len(itemGet)):   #將取得的ID與Title儲存進lst
+        ResultChannelTitle.append(itemGet[i]['snippet']['channelTitle'])
+        ResultChannelId.append(itemGet[i]['id']['channelId'])
+        print(ResultChannelTitle[i])
+        print(ResultChannelId[i],'\n')
+
+#若有複數搜尋頁面
+    n = 0
+
+    if ResultnextPageToken != "":
+        if TotalResult%ResultPerPage == 0:
+            for n in range(TotalResult/ResultPerPage):
+                request = youtube.search().list(    #第二次開始之呼叫，含 nextPageToken
+                    part="snippet",
+                    q="Hololive中文|烤肉|熟肉",
+                    pageToken = "%s"%ResultnextPageToken,
+                    maxResults = 50,
+                    relevanceLanguage="zh_hant",
+                    type="channel"
+                )
+                response = request.execute() #執行
+                if response.has_key('nextPageToken'):
+                    ResultnextPageToken = response['nextPageToken']
+                itemGet = response['items']
+                i = 0 
+
+                for i in range(len(itemGet)):   #將取得的ID與Title儲存進lst
+                    ResultChannelTitle.append(itemGet[i]['snippet']['channelTitle'])
+                    ResultChannelId.append(itemGet[i]['id']['channelId'])
+                    print(ResultChannelTitle[i])
+                    print(ResultChannelId[i],'\n')
+        else:
+            for n in range(TotalResult//ResultPerPage+1):
+                request = youtube.search().list(    #第二次開始之呼叫，含 nextPageToken
+                    part="snippet",
+                    q="Hololive中文|烤肉|熟肉",
+                    pageToken = "%s"%ResultnextPageToken,
+                    maxResults = 50,
+                    relevanceLanguage="zh_hant",
+                    type="channel"
+                )
+                response = request.execute() #執行
+                if response.has_key('nextPageToken'):#判斷是否有Key nextPageToken
+                    ResultnextPageToken = response['nextPageToken']
+                itemGet = response['items']
+                i = 0 
+
+                for i in range(len(itemGet)):   #將取得的ID與Title儲存進lst
+                    ResultChannelTitle.append(itemGet[i]['snippet']['channelTitle'])
+                    ResultChannelId.append(itemGet[i]['id']['channelId'])
+                    print(ResultChannelTitle[i])
+                    print(ResultChannelId[i],'\n')
+   
+                print(ResultChannelTitle,'\n')
+                print(ResultChannelId,'\n')
+        
+
+
     
 
 if __name__ == "__main__":
