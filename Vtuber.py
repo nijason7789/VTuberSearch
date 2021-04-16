@@ -67,9 +67,9 @@ def main():
 #若有複數搜尋頁面
     n = 0
 
-    if ResultnextPageToken != "":
-        if TotalResult%ResultPerPage == 0:
-            for n in range(TotalResult/ResultPerPage):
+    if ResultnextPageToken != "":   #判斷是否還有下一頁
+        if TotalResult%ResultPerPage == 0:  #判斷有幾來，要執行幾次
+            for n in range(TotalResult/ResultPerPage):  
                 request = youtube.search().list(    #第二次開始之呼叫，含 nextPageToken
                     part="snippet",
                     q="Hololive中文|烤肉|熟肉",
@@ -79,16 +79,17 @@ def main():
                     type="channel"
                 )
                 response = request.execute() #執行
-                if response.has_key('nextPageToken'):
+                if 'nextPageToken' in response: #判斷是否還有下一頁
                     ResultnextPageToken = response['nextPageToken']
                 itemGet = response['items']
+                print(ResultnextPageToken)
                 i = 0 
 
                 for i in range(len(itemGet)):   #將取得的ID與Title儲存進lst
                     ResultChannelTitle.append(itemGet[i]['snippet']['channelTitle'])
                     ResultChannelId.append(itemGet[i]['id']['channelId'])
-                    print(ResultChannelTitle[i])
-                    print(ResultChannelId[i],'\n')
+                    #print(ResultChannelTitle[i])
+                    #print(ResultChannelId[i],'\n')
         else:
             for n in range(TotalResult//ResultPerPage+1):
                 request = youtube.search().list(    #第二次開始之呼叫，含 nextPageToken
@@ -100,16 +101,17 @@ def main():
                     type="channel"
                 )
                 response = request.execute() #執行
-                if response.has_key('nextPageToken'):#判斷是否有Key nextPageToken
+                if 'nextPageToken' in response: #判斷是否還有下一頁
                     ResultnextPageToken = response['nextPageToken']
                 itemGet = response['items']
+                print(ResultnextPageToken)
                 i = 0 
 
                 for i in range(len(itemGet)):   #將取得的ID與Title儲存進lst
                     ResultChannelTitle.append(itemGet[i]['snippet']['channelTitle'])
                     ResultChannelId.append(itemGet[i]['id']['channelId'])
-                    print(ResultChannelTitle[i])
-                    print(ResultChannelId[i],'\n')
+                    #print(ResultChannelTitle[i])
+                    #print(ResultChannelId[i],'\n')
    
                 print(ResultChannelTitle,'\n')
                 print(ResultChannelId,'\n')
