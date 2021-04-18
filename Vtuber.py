@@ -3,7 +3,7 @@
 # Sample Python code for youtube.search.list
 # See instructions for running these code samples locally:
 # https://developers.google.com/explorer-help/guides/code_samples#python
-
+import json
 import os
 
 import google_auth_oauthlib.flow
@@ -43,14 +43,15 @@ def main():
     ResultnextPageToken = response['nextPageToken']
     ResultChannelTitle = []
     ResultChannelId = []
+    ResultOutPut = {}
 
 #測試確認用之輸出
 
     print(response,'\n')
     print(itemGet,'\n')
     print(ResultnextPageToken,'\n')
-    print(type(request))
     print(len(itemGet))
+    print(type(request))
     print(type(TotalResult))
     print(type(ResultPerPage))
 
@@ -115,7 +116,20 @@ def main():
    
                 print(ResultChannelTitle,'\n')
                 print(ResultChannelId,'\n')
-        
+    i = 0
+
+    for i in range(len(ResultChannelId)):
+        ResultOutPut[ResultChannelTitle[i]] = ResultChannelId[i]
+
+    print(ResultOutPut)
+    SearchChannelMethod = json.dumps(ResultOutPut, separators=(',\n',': '))
+    print(SearchChannelMethod)
+
+    with open("TestStorage.json","w", encoding='utf-8') as f:
+        json.dump(SearchChannelMethod,f, ensure_ascii=False)
+        print("載入入檔案完成...")
+    
+
 
 
     
