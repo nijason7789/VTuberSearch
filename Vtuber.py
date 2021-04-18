@@ -122,10 +122,10 @@ def main():
         ResultOutPut[ResultChannelTitle[i]] = ResultChannelId[i]
 
     print(ResultOutPut)
-    SearchChannelMethod = json.dumps(ResultOutPut, separators=(',\n',': '))
+    SearchChannelMethod = json.dumps(ResultOutPut, separators=(',\n',': '),ensure_ascii=False)
     print(SearchChannelMethod)
 
-    with open("TestStorage.json","w", encoding='utf-8') as f:
+    with open("TestStorage.json","w", encoding='utf-8') as f:   #儲存成 .json 檔案
         json.dump(SearchChannelMethod,f, ensure_ascii=False)
         print("載入入檔案完成...")
     
