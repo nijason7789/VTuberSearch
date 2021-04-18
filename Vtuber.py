@@ -36,7 +36,7 @@ def main():
         type="channel"
     )
     response = request.execute() #執行
-    PageInfo = response['pageInfo']
+    PageInfo = response['pageInfo'] #將 PageInfo 之值存進 PageInfo 此 dictionary 中
     TotalResult = PageInfo['totalResults']
     ResultPerPage = PageInfo['resultsPerPage']
     itemGet = response['items']
@@ -62,8 +62,8 @@ def main():
     for i in range(len(itemGet)):   #將取得的ID與Title儲存進lst
         ResultChannelTitle.append(itemGet[i]['snippet']['channelTitle'])
         ResultChannelId.append(itemGet[i]['id']['channelId'])
-        print(ResultChannelTitle[i])
-        print(ResultChannelId[i],'\n')
+        #print(ResultChannelTitle[i])
+        #print(ResultChannelId[i],'\n')
 
 #若有複數搜尋頁面
     n = 0
@@ -91,7 +91,8 @@ def main():
                     ResultChannelId.append(itemGet[i]['id']['channelId'])
                     #print(ResultChannelTitle[i])
                     #print(ResultChannelId[i],'\n')
-        else:
+
+        else:   #若無下一頁之情況，也就是最後一頁
             for n in range(TotalResult//ResultPerPage+1):
                 request = youtube.search().list(    #第二次開始之呼叫，含 nextPageToken
                     part="snippet",
@@ -114,11 +115,11 @@ def main():
                     #print(ResultChannelTitle[i])
                     #print(ResultChannelId[i],'\n')
    
-                print(ResultChannelTitle,'\n')
-                print(ResultChannelId,'\n')
+                #print(ResultChannelTitle,'\n') 
+                #print(ResultChannelId,'\n')
     i = 0
 
-    for i in range(len(ResultChannelId)):
+    for i in range(len(ResultChannelId)):   #以 ChannelTitle 為 Key，ChannelID 為 Value 儲存進 ResultOutPut 此 dictionary 進行接下來之跨程式傳遞值
         ResultOutPut[ResultChannelTitle[i]] = ResultChannelId[i]
 
     print(ResultOutPut)
@@ -127,7 +128,7 @@ def main():
 
     with open("TestStorage.json","w", encoding='utf-8') as f:   #儲存成 .json 檔案
         json.dump(SearchChannelMethod,f, ensure_ascii=False)
-        print("載入入檔案完成...")
+        print("成功創建 json 檔案")
     
 
 
