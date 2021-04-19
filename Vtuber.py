@@ -3,7 +3,7 @@
 # Sample Python code for youtube.search.list
 # See instructions for running these code samples locally:
 # https://developers.google.com/explorer-help/guides/code_samples#python
-
+import json
 import os
 
 import google_auth_oauthlib.flow
@@ -36,21 +36,22 @@ def main():
         type="channel"
     )
     response = request.execute() #執行
-    PageInfo = response['pageInfo']
+    PageInfo = response['pageInfo'] #將 PageInfo 之值存進 PageInfo 此 dictionary 中
     TotalResult = PageInfo['totalResults']
     ResultPerPage = PageInfo['resultsPerPage']
     itemGet = response['items']
     ResultnextPageToken = response['nextPageToken']
     ResultChannelTitle = []
     ResultChannelId = []
+    ResultOutPut = {}
 
 #測試確認用之輸出
 
     print(response,'\n')
     print(itemGet,'\n')
     print(ResultnextPageToken,'\n')
-    print(type(request))
     print(len(itemGet))
+    print(type(request))
     print(type(TotalResult))
     print(type(ResultPerPage))
 
@@ -61,8 +62,8 @@ def main():
     for i in range(len(itemGet)):   #將取得的ID與Title儲存進lst
         ResultChannelTitle.append(itemGet[i]['snippet']['channelTitle'])
         ResultChannelId.append(itemGet[i]['id']['channelId'])
-        print(ResultChannelTitle[i])
-        print(ResultChannelId[i],'\n')
+        #print(ResultChannelTitle[i])
+        #print(ResultChannelId[i],'\n')
 
 #若有複數搜尋頁面
     n = 0
@@ -90,7 +91,8 @@ def main():
                     ResultChannelId.append(itemGet[i]['id']['channelId'])
                     #print(ResultChannelTitle[i])
                     #print(ResultChannelId[i],'\n')
-        else:
+
+        else:   #若無下一頁之情況，也就是最後一頁
             for n in range(TotalResult//ResultPerPage+1):
                 request = youtube.search().list(    #第二次開始之呼叫，含 nextPageToken
                     part="snippet",
@@ -113,9 +115,22 @@ def main():
                     #print(ResultChannelTitle[i])
                     #print(ResultChannelId[i],'\n')
    
-                print(ResultChannelTitle,'\n')
-                print(ResultChannelId,'\n')
-        
+                #print(ResultChannelTitle,'\n') 
+                #print(ResultChannelId,'\n')
+    i = 0
+
+    for i in range(len(ResultChannelId)):   #以 ChannelTitle 為 Key，ChannelID 為 Value 儲存進 ResultOutPut 此 dictionary 進行接下來之跨程式傳遞值
+        ResultOutPut[ResultChannelTitle[i]] = ResultChannelId[i]
+
+    print(ResultOutPut)
+    SearchChannelMethod = json.dumps(ResultOutPut, separators=(',\n',': '),ensure_ascii=False)
+    print(SearchChannelMethod)
+
+    with open("TestStorage.json","w", encoding='utf-8') as f:   #儲存成 .json 檔案
+        json.dump(SearchChannelMethod,f, ensure_ascii=False)
+        print("成功創建 json 檔案")
+    
+
 
 
     
