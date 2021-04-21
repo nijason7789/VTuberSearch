@@ -69,8 +69,8 @@ def main():
     n = 0
 
     if ResultnextPageToken != "":   #判斷是否還有下一頁
-        if TotalResult%ResultPerPage == 0:  #判斷有幾來，要執行幾次
-            for n in range(TotalResult/ResultPerPage):  
+        if TotalResult%ResultPerPage == 0:  #是否能整除
+            for n in range(TotalResult/ResultPerPage):  #判斷有幾頁，要執行幾次
                 request = youtube.search().list(    #第二次開始之呼叫，含 nextPageToken
                     part="snippet",
                     q="Hololive中文|烤肉|熟肉",
@@ -92,7 +92,7 @@ def main():
                     #print(ResultChannelTitle[i])
                     #print(ResultChannelId[i],'\n')
 
-        else:   #若無下一頁之情況，也就是最後一頁
+        else:   #若不能整除
             for n in range(TotalResult//ResultPerPage+1):
                 request = youtube.search().list(    #第二次開始之呼叫，含 nextPageToken
                     part="snippet",
